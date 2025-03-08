@@ -59,9 +59,36 @@ const getVerseInChapter = (req, res) => {
     }
 }
 
+const getAllVerses = (req, res) => {
+    const verses = dhammapadaData.chapters.reduce((acc, chapter) => {
+        return acc.concat(chapter.verses);
+    }, []);
+
+    res.json(verses);
+}
+
+const getVerseByNumber = (req, res) => {
+    const verseNumber = parseInt(req.params.verseNumber);
+    const verse = dhammapadaData.chapters.reduce((acc, chapter) => {
+        return acc.concat(chapter.verses);
+    }, []).find(verse => Array.isArray(verse.verseNumber) ? verse.verseNumber.includes(verseNumber) : verse.verseNumber === verseNumber);
+
+    if (verse) {
+        res.json(verse);
+    } else {
+        res.status(404).json({
+            status: "404",
+            error: "Bad Request",
+            message: "The requested resource does not exist."
+        });
+    }
+}
+
 module.exports = {
     getAllChapters,
     getChapterByNumber,
     getAllVersesInChapter,
-    getVerseInChapter
+    getVerseInChapter,
+    getAllVerses,
+    getVerseByNumber
 }
